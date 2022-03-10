@@ -7,6 +7,7 @@
 #include <CCommandBlocker>
 
 ConVar g_cv_BanLength = null;
+ConVar g_cv_BlockLog = null;
 
 ArrayList g_aCommands = null;
 
@@ -15,19 +16,22 @@ public Plugin myinfo =
 	name = "Command Blocker",
 	author = "pRED*, maxime1907",
 	description = "Lets you block or ban commands",
-	version = "1.1",
+	version = "1.2",
 	url = ""
 };
 
 public void OnPluginStart()
 {
 	g_cv_BanLength = CreateConVar("sm_commandblocker_ban_length", "5", "Length of the ban in minutes", FCVAR_NOTIFY, true, 0.0, true, 518400.0);
+	g_cv_BlockLog = CreateConVar("sm_commandblocker_block_log", "1", "Log blocked command attempts", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 
 	RegAdminCmd("sm_commandblocker_reloadcfg", Command_ReloadConfig, ADMFLAG_GENERIC, "Reload blocked commands configs");
 
 	RegAdminCmd("sm_commandblocker_block", Command_Block, ADMFLAG_ROOT, "Block users that attempt to use this command");
 	RegAdminCmd("sm_commandblocker_kick", Command_Kick, ADMFLAG_ROOT, "Kick users that attempt to use this command");
 	RegAdminCmd("sm_commandblocker_ban", Command_Ban, ADMFLAG_ROOT, "Ban users that attempt to use this command");
+
+	AddCommandListener(Command_OnAny, "");
 
 	AutoExecConfig(true);
 }
@@ -40,7 +44,29 @@ public void OnPluginEnd()
 public void OnConfigsExecuted()
 {
 	LoadConfig("configs/commandblocker.cfg");
-	ParseCommands();
+}
+
+public Action Command_OnAny(int client, const char[] command, int argc)
+{
+	if (!IsValidClient(client))
+		return Plugin_Continue;
+
+	char sCommand[CMD_MAX_LEN];
+	GetCmdArg(0, sCommand, sizeof(sCommand));
+
+	for (int i = 0; i < g_aCommands.Length; i++)
+	{
+		CCommandBlocker commandBlocker = g_aCommands.Get(i);
+		char sCommandBlocked[CMD_MAX_LEN];
+		commandBlocker.GetCommand(sCommandBlocked, sizeof(sCommandBlocked));
+
+		if (StrEqual(sCommand, sCommandBlocked))
+		{
+			return ExecuteCommandBlock(client, sCommandBlocked, view_as<eBlockType>(commandBlocker.iBlockType));
+		}
+	}
+
+	return Plugin_Continue;
 }
 
 public Action Command_ReloadConfig(int client, int argc)
@@ -62,9 +88,9 @@ public Action Command_Block(int client, int args)
 	char sCommand[CMD_MAX_LEN];
 	GetCmdArg(1, sCommand, sizeof(sCommand));
 
-	RegisterCommandBlock(sCommand, eBlockType_Block);
+	AddCommandBlock(sCommand, eBlockType_Block);
 
-	ReplyToCommand(client, "[SM] Block command successfully registered");
+	ReplyToCommand(client, "[SM] Block command successfully added");
 
 	return Plugin_Handled;
 }
@@ -80,9 +106,9 @@ public Action Command_Kick(int client, int args)
 	char sCommand[CMD_MAX_LEN];
 	GetCmdArg(1, sCommand, sizeof(sCommand));
 
-	RegisterCommandBlock(sCommand, eBlockType_Kick);
+	AddCommandBlock(sCommand, eBlockType_Kick);
 
-	ReplyToCommand(client, "[SM] Kick command successfully registered");
+	ReplyToCommand(client, "[SM] Kick command successfully added");
 
 	return Plugin_Handled;
 }
@@ -98,9 +124,9 @@ public Action Command_Ban(int client, int args)
 	char sCommand[CMD_MAX_LEN];
 	GetCmdArg(1, sCommand, sizeof(sCommand));
 
-	RegisterCommandBlock(sCommand, eBlockType_Ban);
+	AddCommandBlock(sCommand, eBlockType_Ban);
 
-	ReplyToCommand(client, "[SM] Ban command successfully registered");
+	ReplyToCommand(client, "[SM] Ban command successfully added");
 
 	return Plugin_Handled;
 }
@@ -116,39 +142,6 @@ stock void Cleanup()
 		}
 		delete g_aCommands;
 		g_aCommands = null;
-	}
-}
-
-stock void ParseCommands()
-{
-	for (int i = 0; i < g_aCommands.Length; i++)
-	{
-		CCommandBlocker commandBlocker = g_aCommands.Get(i);
-
-		char sCommand[CMD_MAX_LEN];
-		commandBlocker.GetCommand(sCommand, sizeof(sCommand));
-
-		RegisterCommandBlock(sCommand, view_as<eBlockType>(commandBlocker.iBlockType));
-		LogMessage("Command \"%s\" successfully registered with blocktype %d", sCommand, commandBlocker.iBlockType);
-	}
-}
-
-stock void RegisterCommandBlock(const char[] sCommand, const eBlockType blockType)
-{
-	switch (blockType)
-	{
-		case (eBlockType_Block):
-		{
-			RegConsoleCmd(sCommand, Command_Blocked);
-		}
-		case (eBlockType_Kick):
-		{
-			RegConsoleCmd(sCommand, Command_Kicked);
-		}
-		case (eBlockType_Ban):
-		{
-			RegConsoleCmd(sCommand, Command_Banned);
-		}
 	}
 }
 
@@ -184,44 +177,67 @@ stock void LoadConfig(const char[] sConfigFilePath)
 
 	do
 	{
-		CCommandBlocker	commandBlocker = new CCommandBlocker();
-
 		char sCommand[CMD_MAX_LEN];
-		commandBlocker.GetCommand(sCommand, sizeof(sCommand));
-
 		kvConfig.GetString("command", sCommand, sizeof(sCommand), "");
-		commandBlocker.SetCommand(sCommand);
 
-		commandBlocker.iBlockType = view_as<eBlockType>(kvConfig.GetNum("blocktype", eBlockType_Block));
+		eBlockType blockType = view_as<eBlockType>(kvConfig.GetNum("blocktype", eBlockType_Block));
 
-		if (sCommand[0] != '\0')
-			g_aCommands.Push(commandBlocker);
+		AddCommandBlock(sCommand, blockType);
+
+		LogMessage("Command \"%s\" successfully added with blocktype %d", sCommand, blockType);
 	}
 	while(kvConfig.GotoNextKey(false));
 
 	delete kvConfig;
 }
 
-public Action Command_Blocked(int client, int args)
+stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlockType blockType)
 {
-	char sCommand[CMD_MAX_LEN];
-	GetCmdArg(0, sCommand, sizeof(sCommand));
-	LogMessage("%L attempted to use banned command: %s", client, sCommand);
+	switch (blockType)
+	{
+		case (eBlockType_Block):
+		{
+			if (g_cv_BlockLog.BoolValue)
+				LogMessage("%L attempted to use banned command: %s", client, sCommand);
+		}
+		case (eBlockType_Kick):
+		{
+			ServerCommand("sm_kick #%i \"Attempting to use banned command: %s\"", GetClientUserId(client), sCommand);
+		}
+		case (eBlockType_Ban):
+		{
+			ServerCommand("sm_ban #%i %d \"Attempting to use banned command: %s\"", GetClientUserId(client), g_cv_BanLength.IntValue, sCommand);
+		}
+	}
 	return Plugin_Handled;
 }
 
-public Action Command_Kicked(int client, int args)
+stock void AddCommandBlock(const char[] sCommand, const eBlockType blockType)
 {
-	char sCommand[CMD_MAX_LEN];
-	GetCmdArg(0, sCommand, sizeof(sCommand));
-	ServerCommand("sm_kick #%i \"Attempting to use banned command: %s\"", GetClientUserId(client), sCommand);
+	if (sCommand[0] == '\0')
+		return;
+
+	if (GetCommandFlags(sCommand) == INVALID_FCVAR_FLAGS)
+	{
+		RegConsoleCmd(sCommand, Command_Dummy);
+	}
+
+	CCommandBlocker commandBlocker = new CCommandBlocker();
+	commandBlocker.SetCommand(sCommand);
+	commandBlocker.iBlockType = blockType;
+	g_aCommands.Push(commandBlocker);
+}
+
+public Action Command_Dummy(int client, int args)
+{
 	return Plugin_Handled;
 }
 
-public Action Command_Banned(int client, int args)
+stock bool IsValidClient(int client, bool nobots = true)
 {
-	char sCommand[CMD_MAX_LEN];
-	GetCmdArg(0, sCommand, sizeof(sCommand));
-	ServerCommand("sm_ban #%i %d \"Attempting to use banned command: %s\"", GetClientUserId(client), g_cv_BanLength.IntValue, sCommand);
-	return Plugin_Handled;
+	if (client <= 0 || client > MaxClients || !IsClientConnected(client) || (nobots && IsFakeClient(client)))
+	{
+		return false;
+	}
+	return IsClientInGame(client);
 }
