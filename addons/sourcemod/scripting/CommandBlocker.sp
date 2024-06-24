@@ -18,7 +18,7 @@ public Plugin myinfo =
 	name = "Command Blocker",
 	author = "pRED*, maxime1907",
 	description = "Lets you block or ban commands",
-	version = "1.3",
+	version = "1.3.1",
 	url = ""
 };
 
@@ -63,7 +63,7 @@ public Action Command_OnAny(int client, const char[] command, int argc)
 		char sCommandBlocked[CMD_MAX_LEN];
 		commandBlocker.GetCommand(sCommandBlocked, sizeof(sCommandBlocked));
 
-		if (StrEqual(sCommand, sCommandBlocked))
+		if (strcmp(sCommand, sCommandBlocked, false) == 0)
 		{
 			return ExecuteCommandBlock(client, sCommandBlocked, view_as<eBlockType>(commandBlocker.iBlockType));
 		}
@@ -206,22 +206,21 @@ stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlock
 	
 	if(!kvConfig.GotoFirstSubKey())
 		return Plugin_Handled;
-		
-	else
+
+	do
 	{
-		do
-		{
-			char sCommandIndex[32], sCommandName[64];
-			kvConfig.GetSectionName(sCommandIndex, 32);
-			kvConfig.GetString("command", sCommandName, 64);
-			
-			if(StrEqual(sCommand, sCommandName, false))
-				Format(sCommandIndexNum, 32, "%s", sCommandIndex);
-		}
-		while(kvConfig.GotoNextKey());
+		char sCommandIndex[32], sCommandName[64];
+		kvConfig.GetSectionName(sCommandIndex, sizeof(sCommandIndex));
+		kvConfig.GetString("command", sCommandName, sizeof(sCommandName));
+		
+		if(strcmp(sCommand, sCommandName, false) == 0)
+			Format(sCommandIndexNum, sizeof(sCommandIndexNum), "%s", sCommandIndex);
 	}
+	while(kvConfig.GotoNextKey());
 	
 	delete kvConfig;
+
+	int iUserID = GetClientUserId(client);
 	
 	switch (blockType)
 	{
@@ -234,19 +233,15 @@ stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlock
 		{
 			if (g_cv_BlockLog.BoolValue)
 				LogAction(-1, -1, "%L was kicked for attempted to use banned command: %s", client, sCommand);
-			if (g_cv_Reason.IntValue != 1)
-				ServerCommand("sm_kick #%i \"Attempting to use banned command: %s\"", GetClientUserId(client), sCommand);
-			else
-				ServerCommand("sm_kick #%i \"Attempting to use banned command: #%s\"", GetClientUserId(client), sCommandIndexNum);
+
+			ServerCommand("sm_kick #%i \"Attempting to use banned command: %s\"", iUserID, g_cv_Reason.IntValue != 1 ? sCommand : sCommandIndexNum);
 		}
 		case (eBlockType_Ban):
 		{
 			if (g_cv_BlockLog.BoolValue)
 				LogAction(-1, -1, "%L was banned %d minutes for attempted to use banned command: %s", client, g_cv_BanLength.IntValue, sCommand);
-			if (g_cv_Reason.IntValue != 1)
-				ServerCommand("sm_ban #%i %d \"Attempting to use banned command: %s\"", GetClientUserId(client), g_cv_BanLength.IntValue, sCommand);
-			else
-				ServerCommand("sm_ban #%i %d \"Attempting to use banned command: #%s\"", GetClientUserId(client), g_cv_BanLength.IntValue, sCommandIndexNum);
+
+			ServerCommand("sm_ban #%i %d \"Attempting to use banned command: %s\"", iUserID, g_cv_BanLength.IntValue, g_cv_Reason.IntValue != 1 ? sCommand : sCommandIndexNum);
 		}
 	}
 	return Plugin_Handled;
