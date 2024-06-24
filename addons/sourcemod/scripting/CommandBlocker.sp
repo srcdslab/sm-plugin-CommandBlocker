@@ -210,11 +210,11 @@ stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlock
 	do
 	{
 		char sCommandIndex[32], sCommandName[64];
-		kvConfig.GetSectionName(sCommandIndex, 32);
-		kvConfig.GetString("command", sCommandName, 64);
+		kvConfig.GetSectionName(sCommandIndex, sizeof(sCommandIndex));
+		kvConfig.GetString("command", sCommandName, sizeof(sCommandName));
 		
 		if(strcmp(sCommand, sCommandName, false) == 0)
-			Format(sCommandIndexNum, 32, "%s", sCommandIndex);
+			Format(sCommandIndexNum, sizeof(sCommandIndexNum), "%s", sCommandIndex);
 	}
 	while(kvConfig.GotoNextKey());
 	
