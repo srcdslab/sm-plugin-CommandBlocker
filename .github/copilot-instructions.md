@@ -16,23 +16,20 @@ addons/sourcemod/
 .github/
 └── workflows/
     └── ci.yml                     # CI/CD pipeline
-
-sourceknight.yaml                  # Build system configuration
 ```
 
 ## Build System & Environment
-- **Build Tool**: SourceKnight (configured via `sourceknight.yaml`)
-- **Compiler**: SourceMod compiler (spcomp) via SourceKnight
-- **Dependencies**: SourceMod 1.11.0-git6934, sm-plugin-basic
+- **Build Tool**: Native GitHub Actions workflow (`.github/workflows/ci.yml`)
+- **Compiler**: SourceMod compiler (spcomp) via `rumblefrog/setup-sp`
+- **Dependencies**: SourceMod 1.12, sm-plugin-basic
 - **Output**: Compiled `.smx` files in `/addons/sourcemod/plugins`
 
 ### Building the Plugin
 ```bash
-# Install SourceKnight if not available
-pip install sourceknight
-
-# Build the plugin
-sourceknight build
+# Install the SourcePawn compiler matching the SourceMod version declared in
+# .github/workflows/ci.yml, then compile with the include path set to
+# addons/sourcemod/scripting/include (after copying in the dependency includes):
+spcomp -i include -o ../plugins/CommandBlocker.smx CommandBlocker.sp
 ```
 
 ## Code Style & Standards (Specific to this Repository)
@@ -140,7 +137,7 @@ sourceknight build
 - **basic.inc**: From sm-plugin-basic repository (for methodmap base class)
 
 ## CI/CD Pipeline
-- Automated building via GitHub Actions using SourceKnight
+- Automated building via native GitHub Actions workflow (no external build tool)
 - Artifact packaging including configs
 - Automatic releases on tags and main branch pushes
 - Multi-platform builds (Ubuntu 24.04)
