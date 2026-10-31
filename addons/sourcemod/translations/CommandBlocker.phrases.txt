@@ -1,0 +1,84 @@
+"Phrases"
+{
+	"Configs Reloaded"
+	{
+		"en"		"CommandBlocker configs reloaded."
+		"fr"		"Configs de CommandBlocker rechargées."
+		"ru"		"Конфиги CommandBlocker перезагружены."
+		"es"		"Configuraciones de CommandBlocker recargadas."
+		"de"		"CommandBlocker-Konfigurationen neu geladen."
+		"pt"		"Configurações do CommandBlocker recarregadas."
+		"chi"		"CommandBlocker 配置已重新加载。"
+	}
+	"Usage Block"
+	{
+		"en"		"Usage: sm_commandblocker_block <command>"
+		"fr"		"Utilisation : sm_commandblocker_block <command>"
+		"ru"		"Использование: sm_commandblocker_block <command>"
+		"es"		"Uso: sm_commandblocker_block <command>"
+		"de"		"Verwendung: sm_commandblocker_block <command>"
+		"pt"		"Uso: sm_commandblocker_block <command>"
+		"chi"		"用法：sm_commandblocker_block <command>"
+	}
+	"Block Added"
+	{
+		"en"		"Block command successfully added."
+		"fr"		"Commande à bloquer ajoutée avec succès."
+		"ru"		"Команда для блокировки успешно добавлена."
+		"es"		"Comando a bloquear añadido correctamente."
+		"de"		"Zu blockierender Befehl erfolgreich hinzugefügt."
+		"pt"		"Comando a bloquear adicionado com sucesso."
+		"chi"		"已成功添加屏蔽命令。"
+	}
+	"Usage Kick"
+	{
+		"en"		"Usage: sm_commandblocker_kick <command>"
+		"fr"		"Utilisation : sm_commandblocker_kick <command>"
+		"ru"		"Использование: sm_commandblocker_kick <command>"
+		"es"		"Uso: sm_commandblocker_kick <command>"
+		"de"		"Verwendung: sm_commandblocker_kick <command>"
+		"pt"		"Uso: sm_commandblocker_kick <command>"
+		"chi"		"用法：sm_commandblocker_kick <command>"
+	}
+	"Kick Added"
+	{
+		"en"		"Kick command successfully added."
+		"fr"		"Commande entraînant un kick ajoutée avec succès."
+		"ru"		"Команда с киком успешно добавлена."
+		"es"		"Comando con expulsión añadido correctamente."
+		"de"		"Befehl mit Kick erfolgreich hinzugefügt."
+		"pt"		"Comando com kick adicionado com sucesso."
+		"chi"		"已成功添加踢出命令。"
+	}
+	"Usage Ban"
+	{
+		"en"		"Usage: sm_commandblocker_ban <command>"
+		"fr"		"Utilisation : sm_commandblocker_ban <command>"
+		"ru"		"Использование: sm_commandblocker_ban <command>"
+		"es"		"Uso: sm_commandblocker_ban <command>"
+		"de"		"Verwendung: sm_commandblocker_ban <command>"
+		"pt"		"Uso: sm_commandblocker_ban <command>"
+		"chi"		"用法：sm_commandblocker_ban <command>"
+	}
+	"Ban Added"
+	{
+		"en"		"Ban command successfully added."
+		"fr"		"Commande entraînant un ban ajoutée avec succès."
+		"ru"		"Команда с баном успешно добавлена."
+		"es"		"Comando con baneo añadido correctamente."
+		"de"		"Befehl mit Bann erfolgreich hinzugefügt."
+		"pt"		"Comando com ban adicionado com sucesso."
+		"chi"		"已成功添加封禁命令。"
+	}
+	"Kick Reason"
+	{
+		"#format"	"{1:s}"
+		"en"		"Attempting to use banned command: {1}"
+		"fr"		"Tentative d'utilisation d'une commande interdite : {1}"
+		"ru"		"Попытка использовать запрещённую команду: {1}"
+		"es"		"Intento de usar un comando prohibido: {1}"
+		"de"		"Versuch, einen verbotenen Befehl zu benutzen: {1}"
+		"pt"		"Tentativa de usar um comando proibido: {1}"
+		"chi"		"试图使用被禁止的命令：{1}"
+	}
+}

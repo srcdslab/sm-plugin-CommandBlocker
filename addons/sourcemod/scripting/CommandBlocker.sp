@@ -18,12 +18,14 @@ public Plugin myinfo =
 	name = "Command Blocker",
 	author = "pRED*, maxime1907",
 	description = "Lets you block or ban commands",
-	version = "1.3.1",
+	version = "1.3.2",
 	url = ""
 };
 
 public void OnPluginStart()
 {
+	LoadTranslations("CommandBlocker.phrases");
+
 	g_cv_BanLength = CreateConVar("sm_commandblocker_ban_length", "5", "Length of the ban in minutes", FCVAR_NOTIFY, true, 0.0, true, 518400.0);
 	g_cv_BlockLog = CreateConVar("sm_commandblocker_block_log", "1", "Log blocked command attempts", FCVAR_NOTIFY, true, 0.0, true, 1.0);
 	g_cv_Reason = CreateConVar("sm_commandblocker_ban_reason_hidden", "0", "Replace the command used by his index [0 = No | 1 = Yes]", FCVAR_NOTIFY, true, 0.0, true, 1.0);
@@ -76,7 +78,7 @@ public Action Command_ReloadConfig(int client, int argc)
 {
 	OnConfigsExecuted();
 
-	ReplyToCommand(client, "[SM] CommandBlocker configs reloaded.");
+	ReplyToCommand(client, "[SM] %t", "Configs Reloaded");
 	return Plugin_Handled;
 }
 
@@ -84,7 +86,7 @@ public Action Command_Block(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_commandblocker_block <command>");
+		ReplyToCommand(client, "[SM] %t", "Usage Block");
 		return Plugin_Handled;
 	}
 
@@ -93,7 +95,7 @@ public Action Command_Block(int client, int args)
 
 	AddCommandBlock(sCommand, eBlockType_Block);
 
-	ReplyToCommand(client, "[SM] Block command successfully added");
+	ReplyToCommand(client, "[SM] %t", "Block Added");
 
 	return Plugin_Handled;
 }
@@ -102,7 +104,7 @@ public Action Command_Kick(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_commandblocker_kick <command>");
+		ReplyToCommand(client, "[SM] %t", "Usage Kick");
 		return Plugin_Handled;
 	}
 
@@ -111,7 +113,7 @@ public Action Command_Kick(int client, int args)
 
 	AddCommandBlock(sCommand, eBlockType_Kick);
 
-	ReplyToCommand(client, "[SM] Kick command successfully added");
+	ReplyToCommand(client, "[SM] %t", "Kick Added");
 
 	return Plugin_Handled;
 }
@@ -120,7 +122,7 @@ public Action Command_Ban(int client, int args)
 {
 	if (args < 1)
 	{
-		ReplyToCommand(client, "[SM] Usage: sm_commandblocker_ban <command>");
+		ReplyToCommand(client, "[SM] %t", "Usage Ban");
 		return Plugin_Handled;
 	}
 
@@ -129,7 +131,7 @@ public Action Command_Ban(int client, int args)
 
 	AddCommandBlock(sCommand, eBlockType_Ban);
 
-	ReplyToCommand(client, "[SM] Ban command successfully added");
+	ReplyToCommand(client, "[SM] %t", "Ban Added");
 
 	return Plugin_Handled;
 }
@@ -234,7 +236,9 @@ stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlock
 			if (g_cv_BlockLog.BoolValue)
 				LogAction(-1, -1, "%L was kicked for attempted to use banned command: %s", client, sCommand);
 
-			ServerCommand("sm_kick #%i \"Attempting to use banned command: %s\"", iUserID, g_cv_Reason.IntValue != 1 ? sCommand : sCommandIndexNum);
+			char sReason[512];
+			FormatEx(sReason, sizeof(sReason), "%T", "Kick Reason", client, g_cv_Reason.IntValue != 1 ? sCommand : sCommandIndexNum);
+			ServerCommand("sm_kick #%i \"%s\"", iUserID, sReason);
 		}
 		case (eBlockType_Ban):
 		{
