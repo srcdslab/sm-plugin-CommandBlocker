@@ -18,7 +18,7 @@ public Plugin myinfo =
 	name = "Command Blocker",
 	author = "pRED*, maxime1907",
 	description = "Lets you block or ban commands",
-	version = "1.3.2",
+	version = "1.3.3",
 	url = ""
 };
 
@@ -67,7 +67,7 @@ public Action Command_OnAny(int client, const char[] command, int argc)
 
 		if (strcmp(sCommand, sCommandBlocked, false) == 0)
 		{
-			return ExecuteCommandBlock(client, sCommandBlocked, view_as<eBlockType>(commandBlocker.iBlockType));
+			return ExecuteCommandBlock(client, sCommandBlocked, view_as<eBlockType>(commandBlocker.iBlockType), i);
 		}
 	}
 
@@ -196,7 +196,7 @@ stock void LoadConfig(const char[] sConfigFilePath)
 	delete kvConfig;
 }
 
-stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlockType blockType)
+stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlockType blockType, int iIndex)
 {
 	char sConfigFile[PLATFORM_MAX_PATH];
 	BuildPath(Path_SM, sConfigFile, sizeof(sConfigFile), "%s", "configs/commandblocker.cfg");
@@ -206,21 +206,25 @@ stock Action ExecuteCommandBlock(int client, const char[] sCommand, const eBlock
 	
 	char sCommandIndexNum[32];
 	
-	if(!kvConfig.GotoFirstSubKey())
-		return Plugin_Handled;
-
-	do
+	if(kvConfig.GotoFirstSubKey())
 	{
-		char sCommandIndex[32], sCommandName[64];
-		kvConfig.GetSectionName(sCommandIndex, sizeof(sCommandIndex));
-		kvConfig.GetString("command", sCommandName, sizeof(sCommandName));
-		
-		if(strcmp(sCommand, sCommandName, false) == 0)
-			Format(sCommandIndexNum, sizeof(sCommandIndexNum), "%s", sCommandIndex);
+		do
+		{
+			char sCommandIndex[32], sCommandName[64];
+			kvConfig.GetSectionName(sCommandIndex, sizeof(sCommandIndex));
+			kvConfig.GetString("command", sCommandName, sizeof(sCommandName));
+			
+			if(strcmp(sCommand, sCommandName, false) == 0)
+				Format(sCommandIndexNum, sizeof(sCommandIndexNum), "%s", sCommandIndex);
+		}
+		while(kvConfig.GotoNextKey());
 	}
-	while(kvConfig.GotoNextKey());
 	
 	delete kvConfig;
+
+	// Commands added at runtime are not in the config file: use their position in the block list
+	if (sCommandIndexNum[0] == '\0')
+		IntToString(iIndex, sCommandIndexNum, sizeof(sCommandIndexNum));
 
 	int iUserID = GetClientUserId(client);
 	
