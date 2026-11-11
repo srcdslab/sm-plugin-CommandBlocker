@@ -18,7 +18,7 @@ public Plugin myinfo =
 	name = "Command Blocker",
 	author = "pRED*, maxime1907",
 	description = "Lets you block or ban commands",
-	version = "1.3.3",
+	version = "1.3.4",
 	url = ""
 };
 
