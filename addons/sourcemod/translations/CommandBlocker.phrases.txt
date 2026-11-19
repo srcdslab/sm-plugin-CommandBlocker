@@ -9,6 +9,12 @@
 		"de"		"CommandBlocker-Konfigurationen neu geladen."
 		"pt"		"Configurações do CommandBlocker recarregadas."
 		"chi"		"CommandBlocker 配置已重新加载。"
+		"pl"		"Konfiguracje CommandBlocker zostały przeładowane."
+		"tr"		"CommandBlocker yapılandırmaları yeniden yüklendi."
+		"it"		"Configurazioni di CommandBlocker ricaricate."
+		"ua"		"Конфігурації CommandBlocker перезавантажено."
+		"zho"		"CommandBlocker 設定已重新載入。"
+		"cze"		"Konfigurace CommandBlocker byly znovu načteny."
 	}
 	"Usage Block"
 	{
@@ -19,6 +25,12 @@
 		"de"		"Verwendung: sm_commandblocker_block <command>"
 		"pt"		"Uso: sm_commandblocker_block <command>"
 		"chi"		"用法：sm_commandblocker_block <command>"
+		"pl"		"Użycie: sm_commandblocker_block <command>"
+		"tr"		"Kullanım: sm_commandblocker_block <command>"
+		"it"		"Uso: sm_commandblocker_block <command>"
+		"ua"		"Використання: sm_commandblocker_block <command>"
+		"zho"		"用法：sm_commandblocker_block <command>"
+		"cze"		"Použití: sm_commandblocker_block <command>"
 	}
 	"Block Added"
 	{
@@ -29,6 +41,12 @@
 		"de"		"Zu blockierender Befehl erfolgreich hinzugefügt."
 		"pt"		"Comando a bloquear adicionado com sucesso."
 		"chi"		"已成功添加屏蔽命令。"
+		"pl"		"Pomyślnie dodano komendę do zablokowania."
+		"tr"		"Engellenecek komut başarıyla eklendi."
+		"it"		"Comando da bloccare aggiunto con successo."
+		"ua"		"Команду для блокування успішно додано."
+		"zho"		"已成功新增封鎖指令。"
+		"cze"		"Příkaz k zablokování byl úspěšně přidán."
 	}
 	"Usage Kick"
 	{
@@ -39,6 +57,12 @@
 		"de"		"Verwendung: sm_commandblocker_kick <command>"
 		"pt"		"Uso: sm_commandblocker_kick <command>"
 		"chi"		"用法：sm_commandblocker_kick <command>"
+		"pl"		"Użycie: sm_commandblocker_kick <command>"
+		"tr"		"Kullanım: sm_commandblocker_kick <command>"
+		"it"		"Uso: sm_commandblocker_kick <command>"
+		"ua"		"Використання: sm_commandblocker_kick <command>"
+		"zho"		"用法：sm_commandblocker_kick <command>"
+		"cze"		"Použití: sm_commandblocker_kick <command>"
 	}
 	"Kick Added"
 	{
@@ -49,6 +73,12 @@
 		"de"		"Befehl mit Kick erfolgreich hinzugefügt."
 		"pt"		"Comando com kick adicionado com sucesso."
 		"chi"		"已成功添加踢出命令。"
+		"pl"		"Pomyślnie dodano komendę powodującą wyrzucenie."
+		"tr"		"Atılma komutu başarıyla eklendi."
+		"it"		"Comando di kick aggiunto con successo."
+		"ua"		"Команду для кіку успішно додано."
+		"zho"		"已成功新增踢出指令。"
+		"cze"		"Příkaz k vyhození byl úspěšně přidán."
 	}
 	"Usage Ban"
 	{
@@ -59,6 +89,12 @@
 		"de"		"Verwendung: sm_commandblocker_ban <command>"
 		"pt"		"Uso: sm_commandblocker_ban <command>"
 		"chi"		"用法：sm_commandblocker_ban <command>"
+		"pl"		"Użycie: sm_commandblocker_ban <command>"
+		"tr"		"Kullanım: sm_commandblocker_ban <command>"
+		"it"		"Uso: sm_commandblocker_ban <command>"
+		"ua"		"Використання: sm_commandblocker_ban <command>"
+		"zho"		"用法：sm_commandblocker_ban <command>"
+		"cze"		"Použití: sm_commandblocker_ban <command>"
 	}
 	"Ban Added"
 	{
@@ -69,6 +105,12 @@
 		"de"		"Befehl mit Bann erfolgreich hinzugefügt."
 		"pt"		"Comando com ban adicionado com sucesso."
 		"chi"		"已成功添加封禁命令。"
+		"pl"		"Pomyślnie dodano komendę powodującą bana."
+		"tr"		"Yasaklama komutu başarıyla eklendi."
+		"it"		"Comando di ban aggiunto con successo."
+		"ua"		"Команду для бану успішно додано."
+		"zho"		"已成功新增封禁指令。"
+		"cze"		"Příkaz k zabanování byl úspěšně přidán."
 	}
 	"Kick Reason"
 	{
@@ -80,5 +122,11 @@
 		"de"		"Versuch, einen verbotenen Befehl zu benutzen: {1}"
 		"pt"		"Tentativa de usar um comando proibido: {1}"
 		"chi"		"试图使用被禁止的命令：{1}"
+		"pl"		"Próba użycia zakazanej komendy: {1}"
+		"tr"		"Yasaklı komut kullanma girişimi: {1}"
+		"it"		"Tentativo di usare un comando vietato: {1}"
+		"ua"		"Спроба використати заборонену команду: {1}"
+		"zho"		"嘗試使用被禁止的指令：{1}"
+		"cze"		"Pokus o použití zakázaného příkazu: {1}"
 	}
 }
